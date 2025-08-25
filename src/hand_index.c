@@ -534,7 +534,22 @@ bool hand_unindex(const hand_indexer_t * indexer, uint_fast32_t round, hand_inde
     hand_index_t group_index = index%group_size; index /= group_size;
 
     for(; i<j-1; ++i) {
-      suit_index[i] = low = floor(exp(log(group_index)/(j-i) - 1 + log(j-i))-j-i); high = ceil(exp(log(group_index)/(j-i) + log(j-i))-j+i+1);
+      double tmp = floor(exp(log(group_index)/(j-i) - 1 + log(j-i))-j-i);
+      // if (tmp == -2e0){
+      //   printf("tmp: %f", tmp);
+      //   return 0;
+      // }
+      if (tmp < 0.0){
+        suit_index[i] = low = 0;
+      }else {
+        suit_index[i] = low = tmp;
+      }
+      tmp = ceil(exp(log(group_index)/(j-i) + log(j-i))-j+i+1);
+      if (tmp < 0.0){
+        high = 0;
+      }else {
+        high = tmp;
+      }
       if (high > suit_size) {
         high = suit_size;
       }
