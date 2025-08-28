@@ -4,15 +4,20 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    // Create the main executable
-    const exe = b.addExecutable(.{
-        .name = "check",
+    const exe_mod = b.createModule(.{
+        .root_source_file = b.path("src/root.zig"),
         .target = target,
         .optimize = optimize,
+        .strip = false,
+    });
+
+    const exe = b.addExecutable(.{
+        .name = "check",
+        .root_module = exe_mod,
     });
 
     // Add C source files with appropriate flags
-    exe.addCSourceFiles(.{
+    exe_mod.addCSourceFiles(.{
         .files = &.{
             "src/deck.c",
             "src/hand_index.c",
@@ -21,8 +26,18 @@ pub fn build(b: *std.Build) void {
         .flags = &.{
             "-std=c99",
             "-Wall",
-            "-g",
-            // "-O2",
+            // "-Wextra",
+            // "-Werror",
+
+            // // Critical for ReleaseFast compatibility
+            // "-fno-omit-frame-pointer",
+            // "-fno-stack-protector",
+            // "-D_FORTIFY_SOURCE=0",
+            // "-U_FORTIFY_SOURCE",
+
+            // // Disable aggressive optimizations that might break C code
+            // "-fno-strict-aliasing",
+            // "-fno-delete-null-pointer-checks",
         },
     });
 

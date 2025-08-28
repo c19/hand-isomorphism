@@ -4,3 +4,4 @@ src/check
 index_flop
 unindex_flop
 .zig-cache
+zig-out

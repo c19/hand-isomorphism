@@ -85,7 +85,7 @@ void test_random(hand_indexer_t * indexer) {
   }
 }
 
-int main(int argc, char ** argv) {
+int cmain(int argc, char ** argv) {
   printf("testing hand-isomorphism...\n");  
 
   hand_indexer_t preflop_indexer;
