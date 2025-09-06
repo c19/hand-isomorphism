@@ -4,8 +4,9 @@
 #include <string.h>
 #include <sys/time.h>
 #include "hand_index.h"
+#include "zig_lib.h"
 
-static uint_fast32_t nth_bit(uint64_t used, uint8_t bit);
+
 
 void test_full(hand_indexer_t * indexer) {
   uint_fast32_t total_cards = 0; for(uint_fast32_t i=0; i<indexer->rounds; ++i) {
@@ -86,6 +87,7 @@ void test_random(hand_indexer_t * indexer) {
 }
 
 int cmain(int argc, char ** argv) {
+
   printf("testing hand-isomorphism...\n");  
 
   hand_indexer_t preflop_indexer;
@@ -160,24 +162,24 @@ int cmain(int argc, char ** argv) {
   hand_indexer_free(&preflop_indexer);
 }
 
-static uint8_t nth_bit_[1<<16][16];
-static void __attribute__((constructor)) nth_bit_ctor() {
-  for(uint_fast32_t i=0; i<1<<16; ++i) {
-    for(uint_fast32_t j=0, set=i; set; ++j, set&=set-1) {
-      nth_bit_[i][j] = __builtin_ctz(set);
-    }
-  }
-}
+// static uint8_t nth_bit_[1<<16][16];
+// static void __attribute__((constructor)) nth_bit_ctor() {
+//   for(uint_fast32_t i=0; i<1<<16; ++i) {
+//     for(uint_fast32_t j=0, set=i; set; ++j, set&=set-1) {
+//       nth_bit_[i][j] = __builtin_ctz(set);
+//     }
+//   }
+// }
 
-static uint_fast32_t nth_bit(uint64_t used, uint8_t bit) {
-  for(uint_fast32_t i=0; i<4; ++i) {
-    uint_fast32_t pop = __builtin_popcount(used&0xffff);
-    if (pop > bit) {
-      return 16*i + nth_bit_[used&0xffff][bit];
-    } else {
-      used >>= 16;
-      bit   -= pop;
-    }
-  }
-  return UINT_FAST32_MAX;
-}
+// static uint_fast32_t nth_bit(uint64_t used, uint8_t bit) {
+//   for(uint_fast32_t i=0; i<4; ++i) {
+//     uint_fast32_t pop = __builtin_popcount(used&0xffff);
+//     if (pop > bit) {
+//       return 16*i + nth_bit_[used&0xffff][bit];
+//     } else {
+//       used >>= 16;
+//       bit   -= pop;
+//     }
+//   }
+//   return UINT_FAST32_MAX;
+// }

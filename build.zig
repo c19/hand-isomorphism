@@ -4,6 +4,17 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
+    const zig_lib = b.addLibrary(.{
+        .linkage = .dynamic,
+        .name = "zig_lib",
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("src/zig_lib.zig"),
+            .target = target,
+            .optimize = optimize,
+        }),
+        .version = .{ .major = 1, .minor = 0, .patch = 0 },
+    });
+
     const exe_mod = b.createModule(.{
         .root_source_file = b.path("src/root.zig"),
         .target = target,
@@ -15,6 +26,8 @@ pub fn build(b: *std.Build) void {
         .name = "check",
         .root_module = exe_mod,
     });
+
+    exe.root_module.linkLibrary(zig_lib);
 
     // Add C source files with appropriate flags
     exe_mod.addCSourceFiles(.{
